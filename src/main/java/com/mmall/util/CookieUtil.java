@@ -29,11 +29,25 @@ public class CookieUtil {
         }
         return null;
     }
+    //X:domain=".happymmall.com"
+    //a:A.happymmall.com            cookie:domain=A.happymmall.com;path="/"
+    //b:B.happymmall.com            cookie:domain=B.happymmall.com;path="/"
+    //c:A.happymmall.com/test/cc    cookie:domain=A.happymmall.com;path="/test/cc"
+    //d:A.happymmall.com/test/dd    cookie:domain=A.happymmall.com;path="/test/dd"
+    //e:A.happymmall.com/test       cookie:domain=A.happymmall.com;path="/test"
+
+    /**
+     * a,b,c,d,e都能拿到种在".happymmall.com"一级域名下的Cookie
+     * a,b都是种的二级域名下的Cookie，所以互相拿不到Cookie
+     * c,d能够共享a的Cookie，由于c,d的path设置，c,d也能共享e的Cookie；但是c拿不到d的，d也拿不到c的
+     * c和d也拿不到b的
+     */
 
     public static void writeLoginToken(HttpServletResponse response, String token){
         Cookie ck = new Cookie(COOKIE_NAME, token);
         ck.setDomain(COOKIE_DOMAIN);
         ck.setPath("/"); //代表设置在根目录
+        ck.setHttpOnly(true);
 
         //单位是秒
         //如果不设置maxAge，Cookie就不会写入硬盘，而是写在内存，只在当前页面有效
